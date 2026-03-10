@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Vibraphone - Messages{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h1 class="h2 mb-4">Your Messages</h1>
+
+        <ul class="nav nav-tabs mb-4" id="messageTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="received-tab" data-bs-toggle="tab" data-bs-target="#received" type="button" role="tab" aria-controls="received" aria-selected="true">Received</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sent-tab" data-bs-toggle="tab" data-bs-target="#sent" type="button" role="tab" aria-controls="sent" aria-selected="false">Sent</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="messageTabsContent">
+            <div class="tab-pane fade show active" id="received" role="tabpanel" aria-labelledby="received-tab">
+                {% if received_messages %}
+                    {% for msg in received_messages %}
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <a href="{% url 'profile_view_user' msg.sender.username %}" class="fw-bold text-decoration-none">From: @{{ msg.sender.username }}</a>
+                                    <span class="text-muted small">{{ msg.created_at|date:"M d, Y H:i" }}</span>
+                                </div>
+                                <p class="card-text">{{ msg.content|linebreaks }}</p>
+                                <a href="{% url 'message_send' msg.sender.username %}" class="btn btn-sm btn-outline-primary">Reply</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No messages received.</p>
+                {% endif %}
+            </div>
+
+            <div class="tab-pane fade" id="sent" role="tabpanel" aria-labelledby="sent-tab">
+                {% if sent_messages %}
+                    {% for msg in sent_messages %}
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <a href="{% url 'profile_view_user' msg.recipient.username %}" class="fw-bold text-decoration-none">To: @{{ msg.recipient.username }}</a>
+                                    <span class="text-muted small">{{ msg.created_at|date:"M d, Y H:i" }}</span>
+                                </div>
+                                <p class="card-text">{{ msg.content|linebreaks }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No messages sent.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
