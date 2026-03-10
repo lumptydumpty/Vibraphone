@@ -45,3 +45,19 @@ class MicroblogTests(TestCase):
         response = self.client.get(reverse('home'))
         # Should contain a link to user2's profile
         self.assertContains(response, f'href="{reverse("profile_view_user", kwargs={"username": "user2"})}"')
+
+    def test_post_edit(self):
+        self.client.login(username='user1', password='password123')
+        response = self.client.post(reverse('post_edit', kwargs={'pk': self.post.pk}), {'content': 'Updated content'})
+        self.assertEqual(response.status_code, 302)
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.content, 'Updated content')
+
+    def test_xss_prevention(self):
+        xss_post = Post.objects.create(author=self.user1, content='<script>alert("xss")</script> @user2')
+        response = self.client.get(reverse('home'))
+        # The script tag should be escaped
+        # Django's escape() also escapes quotes as &quot;
+        self.assertContains(response, '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;')
+        # But the mention should still be rendered as a link
+        self.assertContains(response, f'href="{reverse("profile_view_user", kwargs={"username": "user2"})}"')

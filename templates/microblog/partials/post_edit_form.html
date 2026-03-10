@@ -1,0 +1,13 @@
+<form hx-post="{% url 'post_edit' post.pk %}" hx-target="#post-{{ post.id }}" hx-swap="outerHTML" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-2">
+        {{ form.content }}
+    </div>
+    <div class="mb-2">
+        <input type="file" name="image" class="form-control form-control-sm">
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-sm btn-outline-secondary me-2" hx-get="{% url 'home' %}?page=1" hx-target="#post-{{ post.id }}" hx-select="#post-{{ post.id }}">Cancel</button>
+        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+    </div>
+</form>

@@ -32,6 +32,26 @@ def post_create(request):
     return redirect('home')
 
 @login_required
+def post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if post.author != request.user:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            if request.headers.get('HX-Request'):
+                return render(request, 'microblog/partials/post.html', {'post': post})
+            return redirect('home')
+    else:
+        form = PostForm(instance=post)
+
+    if request.headers.get('HX-Request'):
+        return render(request, 'microblog/partials/post_edit_form.html', {'form': form, 'post': post})
+    return render(request, 'microblog/post_edit.html', {'form': form, 'post': post})
+
+@login_required
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if post.author != request.user:
