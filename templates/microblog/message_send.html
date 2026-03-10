@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Vibraphone - Message @{{ recipient.username }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="card-title h3 mb-4">Message @{{ recipient.username }}</h1>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label">Message</label>
+                        {{ form.content }}
+                        {% for error in form.content.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'profile_view_user' recipient.username %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

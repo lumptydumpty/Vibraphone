@@ -1,0 +1,49 @@
+{% load microblog_extras %}
+<div class="card mb-3 shadow-sm post-item" id="post-{{ post.id }}">
+    <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+            {% if post.author.profile_image %}
+                <img src="{{ post.author.profile_image.url }}" alt="" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+            {% else %}
+                <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                    {{ post.author.username|first|upper }}
+                </div>
+            {% endif %}
+            <div>
+                <a href="{% url 'profile_view_user' post.author.username %}" class="fw-bold text-decoration-none">@{{ post.author.username }}</a>
+                <div class="text-muted small">{{ post.created_at|timesince }} ago</div>
+            </div>
+
+            {% if user == post.author %}
+                <div class="ms-auto">
+                    <button class="btn btn-sm btn-outline-danger"
+                            hx-post="{% url 'post_delete' post.pk %}"
+                            hx-target="#post-{{ post.id }}"
+                            hx-swap="outerHTML"
+                            hx-confirm="Are you sure you want to delete this post?"
+                            aria-label="Delete post">
+                        Delete
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
+        <p class="card-text">{{ post.content|parse_mentions_tag }}</p>
+
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post image" class="img-fluid rounded mb-3">
+        {% endif %}
+
+        <div class="d-flex align-items-center border-top pt-2">
+            <div id="like-section-{{ post.id }}">
+                {% include 'microblog/partials/like_button.html' with post=post %}
+            </div>
+
+            {% if user.is_authenticated and user != post.author %}
+                <a href="{% url 'message_send' post.author.username %}" class="btn btn-sm btn-link text-decoration-none ms-3" aria-label="Message @{{ post.author.username }}">
+                    Message
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

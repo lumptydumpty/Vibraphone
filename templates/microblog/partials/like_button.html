@@ -1,0 +1,7 @@
+<button class="btn btn-sm {% if liked %}btn-primary{% else %}btn-outline-primary{% endif %}"
+        hx-post="{% url 'post_like' post.pk %}"
+        hx-target="#like-section-{{ post.id }}"
+        hx-swap="innerHTML"
+        aria-label="{% if liked %}Unlike{% else %}Like{% endif %} post. Total likes: {{ post.likes.count }}">
+    <span aria-hidden="true">👍</span> {{ post.likes.count }}
+</button>

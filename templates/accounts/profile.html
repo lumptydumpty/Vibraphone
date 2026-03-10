@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Vibraphone - Profile: @{{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-body text-center">
+                {% if profile_user.profile_image %}
+                    <img src="{{ profile_user.profile_image.url }}" alt="Profile image of @{{ profile_user.username }}" class="img-fluid rounded-circle mb-3 shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px; font-size: 3rem;">
+                        {{ profile_user.username|first|upper }}
+                    </div>
+                {% endif %}
+                <h1 class="h3 card-title mb-1">{% if profile_user.name %}{{ profile_user.name }}{% else %}@{{ profile_user.username }}{% endif %}</h1>
+                <p class="text-muted">@{{ profile_user.username }}</p>
+
+                {% if user == profile_user %}
+                    <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-sm w-100">Edit Profile</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h2 class="h4 card-title border-bottom pb-2">About</h2>
+                <div class="mb-3">
+                    <strong>Location:</strong> {{ profile_user.location|default:"Not specified" }}
+                </div>
+                <div class="mb-3">
+                    <strong>Bio:</strong>
+                    <p class="mt-1">{{ profile_user.bio|default:"No bio yet."|linebreaks }}</p>
+                </div>
+                <div class="mb-3">
+                    <strong>Contact:</strong> {{ profile_user.contact_info|default:"Not shared" }}
+                </div>
+                <div class="mb-3">
+                    <strong>Links:</strong>
+                    <div class="mt-1">
+                        {% if profile_user.links %}
+                            {% for link in profile_user.links.splitlines %}
+                                <a href="{{ link }}" target="_blank" rel="noopener noreferrer" class="d-block">{{ link }}</a>
+                            {% endfor %}
+                        {% else %}
+                            No links shared.
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Feed will go here -->
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="h4 card-title border-bottom pb-2">Recent Posts</h2>
+                <p class="text-muted">No posts to display yet.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
